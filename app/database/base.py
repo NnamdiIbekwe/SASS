@@ -6,19 +6,11 @@ from sqlalchemy import create_engine
 from passlib.context import CryptContext
 import bcrypt
 from app.schemas.user import UserCreate
+from app.database.session import SessionLocal
 # from sqlalchemy.orm import Session
 # from app.models import *
 
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# load_dotenv()
-
-# engine = create_engine(
-#     os.getenv("DATABASE_URL"),
-# )
-
-# SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 Base = declarative_base()
 

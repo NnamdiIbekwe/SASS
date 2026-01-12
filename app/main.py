@@ -3,16 +3,15 @@ import os
 from dotenv import load_dotenv
 from app.schemas.user import UserCreate
 from app.database.base import get_db
+from app.api.v1 import auth
+from app.core.config import settings
 
 load_dotenv()
 
-
-
 app = FastAPI(title="Student Assignment Submission System")
 
-@app.get("/")
-async def read_root():
-    return {"message": "Welcome to the Student Assignment Submission System!"}
+app.include_router(auth.router, prefix=settings.API_V1_STR, tags=["auth"])
+
 
 @app.post("/students/register", status_code=201)
 async def register_student(student: UserCreate):

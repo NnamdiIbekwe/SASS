@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 import enum
 # from sqlalchemy import Enum as SqlEnum
 
@@ -19,4 +19,9 @@ class UserUpdate(BaseModel):
     email: EmailStr | None  = None
     password: str | None = None
 
+class UserRead(UserBase):
+    id: int
+    created_at: str
 
+    class Config:
+        model_config = ConfigDict(from_attributes=True)
