@@ -27,9 +27,12 @@ response = {"message": "User created"}
 
 
 def create_new_user(user: UserCreate, db: Session = Depends(get_db)):
-    new_user = User(username=user.username, password=user.password)
+    new_user = User(username=user.username, password=user.hashed_password)
+    db_user.hashed_password = bcrypt.hashpw(user_updates.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     db.add(new_user)
     db.commit() 
     db.refresh(new_user) 
  
     return new_user
+
+    

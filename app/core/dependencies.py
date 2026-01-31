@@ -1,12 +1,13 @@
-from app.database.session import SessionLocal
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session 
-from fastapi import Depends, HTTPException
+
+from app.database.session import SessionLocal
 from app.core.security import decode_access_token
 from app.models.users import User
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
 def get_db():
@@ -23,15 +24,24 @@ def get_current_user(
 ):
     data = decode_access_token(token)
     if data is None:
-        raise HTTPException(status_code=401, detail="Invalid authentication credentials")
-    user_id = db.query(user).filter(user.email == data.get('sub')).first()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Invalid authentication credentials"
+        )
+    user = db.query(User).filter(User.email == data.get('sub')).first()
     if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="User not found"
+        )
     return user
 
 def get_current_active_user(
     current_user: User = Depends(get_current_user)
 ):
     if not current_user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail="Inactive user"
+        )
     return current_user 
